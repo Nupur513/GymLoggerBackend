@@ -1,4 +1,4 @@
-import  { response_500, response_200,response_404 } from '../utils/statuscodes.utils.js';
+import  { response_500, response_200,response_201,response_404 } from '../utils/statuscodes.utils.js';
 import prisma from '../config/db.config.js';
 
 export async function getExercises(req, res) {
@@ -21,7 +21,7 @@ export async function createExercise(req,res){
                 description,
             }
         });
-        response_200(res,"exercise created successfully",exercise);
+        response_201(res,"exercise created successfully",exercise);
     }
     catch(error){
         response_500(res, "error creating exercise: ",error);
