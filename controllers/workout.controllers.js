@@ -38,7 +38,21 @@ export async function modifyWorkoutStatus(req,res){
             response_404(res, "cannot modify workout status to the given status");
             return ;
         }
-        const workout = await prisma.workout.update({
+        const workout = await prisma.workout.findUnique({
+            where:{
+                id: workoutId
+            }
+        });
+        if(!workout)
+        {
+            response_404(res, "workout not found");
+            return;
+        }
+        if(workout.status == "completed"){
+            response_404(res, "cannot modify status of completed workout");
+            return;
+        }
+        const modifiedWorkout = await prisma.workout.update({
             where: {
                 id: workoutId
             },
@@ -46,7 +60,7 @@ export async function modifyWorkoutStatus(req,res){
                 status: status
             }
         });
-        response_200(res,"workout status modified successfully",workout);
+        response_200(res,"workout status modified successfully",modifiedWorkout);
     }
     catch(error){
         response_500(res, "error modifying workout status: ",error);
@@ -60,8 +74,20 @@ export async function modifyExerciseStatus(req,res){
         if(!(status == "active" || status == "completed")) {
             response_404(res, "cannot modify exercise status to the given status");return;
         }
-        
-        const exercise = await prisma.workoutExercise.update({
+        const exercise = await prisma.workoutExercise.findUnique({
+            where: {
+                id: exerciseId
+            }
+        });
+        if(!exercise){
+            response_404(res, "exercise not found");
+            return;
+        }
+        if(exercise.status == "completed"){
+            response_404(res, "cannot modify status of completed exercise");
+            return;
+        }
+        const modifiedExercise = await prisma.workoutExercise.update({
             where: {
                 id: exerciseId,   
             },
@@ -70,7 +96,7 @@ export async function modifyExerciseStatus(req,res){
             }
         });
         
-        response_200(res,"exercise status modified successfully",exercise);
+        response_200(res,"exercise status modified successfully",modifiedExercise);
     }
     catch(error){
         response_500(res, "error modifying exercise status: ",error);
