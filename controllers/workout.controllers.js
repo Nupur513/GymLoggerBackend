@@ -1,9 +1,13 @@
-import  { response_500, response_200, response_201, response_404 } from '../utils/statuscodes.utils.js';
+import  { response_500, response_200, response_201,response_400, response_404 } from '../utils/statuscodes.utils.js';
 import prisma from '../config/db.config.js';
 
 export async function createWorkout(req, res) {
     try{
         const {workoutExercises} = req.body;
+        
+        if (!req.user.userId) {
+            return response_400(res, "User ID is missing in the request");
+        }
         const workout = await prisma.workout.create({
             data: {
                 status: "yetToStart",
@@ -16,9 +20,11 @@ export async function createWorkout(req, res) {
                         sets: currentExcercise.sets,
                         reps: currentExcercise.reps,
                         weight: currentExcercise.weight,
-                        status: currentExcercise.status || "yetToStart"
+                        status: currentExcercise.status || "yetToStart",
+                        
                     }))
                 },
+                userId: req.user.userId
                 
             }
         });
@@ -40,6 +46,7 @@ export async function modifyWorkoutStatus(req,res){
         }
         const workout = await prisma.workout.findUnique({
             where:{
+                userId: req.user.userId,
                 id: workoutId
             }
         });
@@ -69,18 +76,23 @@ export async function modifyWorkoutStatus(req,res){
 
 export async function modifyExerciseStatus(req,res){
     try{
-        const {exerciseId} = req.params;
+        const {workoutId, exerciseId} = req.params;
         const {status}  = req.body;
         if(!(status == "active" || status == "completed")) {
             response_400(res, "cannot modify exercise status to the given status");return;
         }
-        const exercise = await prisma.workoutExercise.findUnique({
+        const exercise = await prisma.workout.findUnique({
             where: {
-                id: exerciseId
+                id: workoutId
             }
         });
+        
         if(!exercise){
             response_404(res, "exercise not found");
+            return;
+        }
+        if(req.user.userId != exercise.userId){
+            response_403(res, "forbidden");
             return;
         }
         if(exercise.status == "completed"){
@@ -89,7 +101,8 @@ export async function modifyExerciseStatus(req,res){
         }
         const modifiedExercise = await prisma.workoutExercise.update({
             where: {
-                id: exerciseId,   
+                id: exerciseId, 
+                workoutId: exercise.id
             },
             data: {
                 status: status
