@@ -41,28 +41,22 @@ model Exercise {
   workoutExercises WorkoutExercise[] // Back relation to WorkoutExercise model
 }
 
-model WorkoutExerciseDetail {
-  id                String          @id @default(auto()) @map("_id") @db.ObjectId
-  sets              Int
-  reps              Int
-  weight            Int
-  workoutExercise   WorkoutExercise @relation(fields: [workoutExerciseId], references: [id])
-  workoutExerciseId String
-}
-
 model WorkoutExercise {
-  id                     String                  @id @default(auto()) @map("_id") @db.ObjectId
-  exercise               Exercise                @relation(fields: [exerciseId], references: [id])
-  exerciseId             String
-  name                   String
-  workoutExerciseDetails WorkoutExerciseDetail[]
-  workout                Workout                 @relation("WorkoutToWorkoutExercise", fields: [workoutId], references: [id])
-  workoutId              String
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  exerciseId String
+  name       String
+  sets       Int
+  reps       Int
+  weight     Int
+  status     Status   @default(yetToStart)
+  workout    Workout  @relation("WorkoutToWorkoutExercise", fields: [workoutId], references: [id])
+  workoutId  String
 }
 
 model Workout {
   id               String            @id @default(auto()) @map("_id") @db.ObjectId
-  status           Status
+  status           Status            @default(yetToStart)
   created          DateTime          @default(now())
   workoutExercises WorkoutExercise[] @relation("WorkoutToWorkoutExercise")
 }
@@ -70,5 +64,5 @@ model Workout {
 enum Status {
   active
   completed
-  cancelled
+  yetToStart
 }
