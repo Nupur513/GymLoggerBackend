@@ -5,5 +5,5 @@ const router = express.Router();
 
 router.route('/createWorkout').post(createWorkout);
 router.route('/modifyWorkoutStatus/:workoutId').patch(modifyWorkoutStatus);
-router.route('/modifyExerciseStatus/:exerciseId').patch(modifyExerciseStatus);
+router.route('/modifyExerciseStatus/:workoutId/:exerciseId').patch(modifyExerciseStatus);
 export default router;

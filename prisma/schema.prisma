@@ -18,6 +18,7 @@ model User {
   friends   UserFriends[] @relation("UserFriends_user")
   friendOf  UserFriends[] @relation("UserFriends_friend")
   exercises Exercise[] // Back relation to Exercise model
+  Workout   Workout[]
 }
 
 model UserFriends {
@@ -36,9 +37,9 @@ model Exercise {
   bodyPart         String
   equipment        String
   description      String?
-  userId           String?
-  user             User?             @relation(fields: [userId], references: [id])
   workoutExercises WorkoutExercise[] // Back relation to WorkoutExercise model
+  User             User?             @relation(fields: [userId], references: [id])
+  userId           String?           @db.ObjectId
 }
 
 model WorkoutExercise {
@@ -59,6 +60,8 @@ model Workout {
   status           Status            @default(yetToStart)
   created          DateTime          @default(now())
   workoutExercises WorkoutExercise[] @relation("WorkoutToWorkoutExercise")
+  userId           String?
+  user             User?             @relation(fields: [userId], references: [id])
 }
 
 enum Status {

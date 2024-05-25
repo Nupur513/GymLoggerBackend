@@ -3,12 +3,12 @@ import express from 'express';
 import { default as exerciseRouter } from './exercises.routes.js'
 import { default as workoutRouter } from './workout.routes.js'
 import {default as authRouter}  from './auth.routes.js'
-
+import {authVerify} from '../../middlewares/auth.middleware.js'
 const router = express.Router();
 
 
-router.use('/exercises', exerciseRouter);
-router.use('/workout', workoutRouter);
+router.use('/exercises', authVerify, exerciseRouter);
+router.use('/workout', authVerify, workoutRouter);
 router.use('/auth', authRouter);
 
 export default router;
