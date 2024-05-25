@@ -1,4 +1,4 @@
-import  { response_500, response_200,response_404 } from '../utils/statuscodes.utils.js';
+import  { response_500, response_200, response_201, response_404 } from '../utils/statuscodes.utils.js';
 import prisma from '../config/db.config.js';
 
 export async function createWorkout(req, res) {
@@ -22,7 +22,7 @@ export async function createWorkout(req, res) {
                 
             }
         });
-        response_200(res,"workout created successfully" ,workout);
+        response_201(res,"workout created successfully" ,workout);
     }
     catch(error)
     {
@@ -35,7 +35,7 @@ export async function modifyWorkoutStatus(req,res){
         const {workoutId} = req.params;
         const {status} = req.body;
         if(!(status == "active" || status == "completed")) {
-            response_404(res, "cannot modify workout status to the given status");
+            response_400(res, "cannot modify workout status to the given status");
             return ;
         }
         const workout = await prisma.workout.findUnique({
@@ -49,7 +49,7 @@ export async function modifyWorkoutStatus(req,res){
             return;
         }
         if(workout.status == "completed"){
-            response_404(res, "cannot modify status of completed workout");
+            response_400(res, "cannot modify status of completed workout");
             return;
         }
         const modifiedWorkout = await prisma.workout.update({
@@ -72,7 +72,7 @@ export async function modifyExerciseStatus(req,res){
         const {exerciseId} = req.params;
         const {status}  = req.body;
         if(!(status == "active" || status == "completed")) {
-            response_404(res, "cannot modify exercise status to the given status");return;
+            response_400(res, "cannot modify exercise status to the given status");return;
         }
         const exercise = await prisma.workoutExercise.findUnique({
             where: {
@@ -84,7 +84,7 @@ export async function modifyExerciseStatus(req,res){
             return;
         }
         if(exercise.status == "completed"){
-            response_404(res, "cannot modify status of completed exercise");
+            response_400(res, "cannot modify status of completed exercise");
             return;
         }
         const modifiedExercise = await prisma.workoutExercise.update({
