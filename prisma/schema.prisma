@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  firstName String
+  lastName  String
+  email     String        @unique
+  password  String
+  weight    Int?
+  height    Int?
+  friends   UserFriends[] @relation("UserFriends_user")
+  friendOf  UserFriends[] @relation("UserFriends_friend")
+  exercises Exercise[] // Back relation to Exercise model
+}
+
+model UserFriends {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  userId   String
+  friendId String
+  user     User   @relation("UserFriends_user", fields: [userId], references: [id])
+  friend   User   @relation("UserFriends_friend", fields: [friendId], references: [id])
+
+  @@unique([userId, friendId])
+}
+
+model Exercise {
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  name             String            @unique
+  bodyPart         String
+  equipment        String
+  description      String?
+  userId           String?
+  user             User?             @relation(fields: [userId], references: [id])
+  workoutExercises WorkoutExercise[] // Back relation to WorkoutExercise model
+}
+
+model WorkoutExerciseDetail {
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  sets              Int
+  reps              Int
+  weight            Int
+  workoutExercise   WorkoutExercise @relation(fields: [workoutExerciseId], references: [id])
+  workoutExerciseId String
+}
+
+model WorkoutExercise {
+  id                     String                  @id @default(auto()) @map("_id") @db.ObjectId
+  exercise               Exercise                @relation(fields: [exerciseId], references: [id])
+  exerciseId             String
+  name                   String
+  workoutExerciseDetails WorkoutExerciseDetail[]
+  workout                Workout                 @relation("WorkoutToWorkoutExercise", fields: [workoutId], references: [id])
+  workoutId              String
+}
+
+model Workout {
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  status           Status
+  created          DateTime          @default(now())
+  workoutExercises WorkoutExercise[] @relation("WorkoutToWorkoutExercise")
+}
+
+enum Status {
+  active
+  completed
+  cancelled
+}
