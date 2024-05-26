@@ -21,6 +21,8 @@ export async function createExercise(req,res){
                 description,
             }
         });
+
+        
         response_201(res,"exercise created successfully",exercise);
     }
     catch(error){
