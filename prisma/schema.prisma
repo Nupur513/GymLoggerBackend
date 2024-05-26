@@ -33,13 +33,15 @@ model UserFriends {
 
 model Exercise {
   id               String            @id @default(auto()) @map("_id") @db.ObjectId
-  name             String            @unique
+  name             String
   bodyPart         String
   equipment        String
   description      String?
   workoutExercises WorkoutExercise[] // Back relation to WorkoutExercise model
-  User             User?             @relation(fields: [userId], references: [id])
-  userId           String?           @db.ObjectId
+  User             User              @relation(fields: [userId], references: [id])
+  userId           String            @db.ObjectId
+
+  @@unique([name, userId])
 }
 
 model WorkoutExercise {

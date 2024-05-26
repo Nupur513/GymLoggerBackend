@@ -41,6 +41,12 @@ export async function register(req, res) {
         lastName: newUser.lastName,
         token: token
     }
+    const defaultExercises = await prisma.exercise.createMany({
+        data: exercisesArray.map(exercise=>({
+            ...exercise,
+            userId: newUser.id
+        })),
+    })
     response_201(res, "User registered successfully", returnedUser);
     }
     catch(error)
@@ -89,3 +95,66 @@ export async function login(req, res) {
         response_500(res, "error logging in user: ", error);
     }
 }
+
+const exercisesArray = [
+    {
+        "name": "Dumbell Press",
+        "bodyPart": "Chest",
+        "equipment": "Dumbell",
+        "description": "The dumbell press is a compound exercise that targets the chest, shoulders, and triceps. It involves lying on a bench with weighted dumbells and pressing it upwards from the chest."
+    },
+    {
+        "name": "Barbell Squat",
+        "bodyPart": "Legs",
+        "equipment": "Barbell",
+        "description": "The barbell squat is a compound exercise that targets the quadriceps, hamstrings, glutes, and lower back. It involves lowering your hips from a standing position and then standing back up while holding a barbell across your shoulders."
+    },
+    {
+        "name": "Pull-Up",
+        "bodyPart": "Back",
+        "equipment": "Pull-Up Bar",
+        "description": "The pull-up is a bodyweight exercise that targets the latissimus dorsi, biceps, and upper back. It involves hanging from a pull-up bar and pulling your body upwards until your chin is above the bar."
+    },
+    {
+        "name": "Deadlift",
+        "bodyPart": "Back",
+        "equipment": "Barbell",
+        "description": "The deadlift is a compound exercise that targets the lower back, hamstrings, glutes, and core. It involves lifting a barbell from the ground to hip level while keeping the back straight."
+    },
+    {
+        "name": "Bicep Curl",
+        "bodyPart": "Arms",
+        "equipment": "Dumbell",
+        "description": "The bicep curl is an isolation exercise that targets the biceps. It involves lifting a dumbell from the waist to shoulder level while keeping the upper arm stationary."
+    },
+    {
+        "name": "Tricep Dip",
+        "bodyPart": "Arms",
+        "equipment": "Dip Bar",
+        "description": "The tricep dip is a bodyweight exercise that targets the triceps. It involves lowering and raising your body by bending and extending the elbows while supporting your weight on dip bars."
+    },
+    {
+        "name": "Lateral Raise",
+        "bodyPart": "Shoulders",
+        "equipment": "Dumbell",
+        "description": "The lateral raise is an isolation exercise that targets the lateral deltoids. It involves lifting dumbells from your sides to shoulder height while keeping your arms straight."
+    },
+    {
+        "name": "Leg Press",
+        "bodyPart": "Legs",
+        "equipment": "Leg Press Machine",
+        "description": "The leg press is a compound exercise that targets the quadriceps, hamstrings, and glutes. It involves pushing a weighted platform away from your body using your legs while seated on a leg press machine."
+    },
+    {
+        "name": "Plank",
+        "bodyPart": "Core",
+        "equipment": "Bodyweight",
+        "description": "The plank is a bodyweight exercise that targets the core, including the rectus abdominis, obliques, and lower back. It involves holding a push-up position with your body in a straight line from head to heels."
+    },
+    {
+        "name": "Bench Press",
+        "bodyPart": "Chest",
+        "equipment": "Barbell",
+        "description": "The bench press is a compound exercise that targets the chest, shoulders, and triceps. It involves lying on a bench and pressing a barbell upwards from the chest."
+    }
+]
