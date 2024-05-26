@@ -12,6 +12,14 @@ export async function getExercises(req, res) {
 
 export async function createExercise(req,res){
     try{
+        if(!req.body.name || !req.body.bodyPart || !req.body.equipment || !req.body.description){
+            response_404(res,"Please provide all the fields");
+            return;
+        }
+        if(!req.user.userId){
+            response_404(res,"Unauthorized");
+            return;
+        }
         const {name,equipment, bodyPart, description} = req.body;
         const exercise = await prisma.exercise.create({
             data: {
@@ -19,6 +27,7 @@ export async function createExercise(req,res){
                 bodyPart,
                 equipment,
                 description,
+                userId: req.user.userId
             }
         });
 

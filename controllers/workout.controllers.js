@@ -1,6 +1,6 @@
 import  { response_500, response_200, response_201,response_400, response_404 } from '../utils/statuscodes.utils.js';
 import prisma from '../config/db.config.js';
-
+import { format } from 'date-fns';
 export async function createWorkout(req, res) {
     try{
         const {workoutExercises} = req.body;
@@ -116,3 +116,29 @@ export async function modifyExerciseStatus(req,res){
     }
 }
 
+export const getWorkoutDates = async (req, res) => {
+    try {
+        const workouts = await prisma.workout.findMany({
+            where: {
+                userId: req.user.userId,
+                //status: "completed"
+            },
+            select: {
+                created: true,
+            }
+        });
+          // Debugging: Print the retrieved workouts
+    console.log('Retrieved workouts:', workouts);
+
+
+    const creationDates = workouts.map(workout => {
+        const date = new Date(workout.created);
+        return date.toISOString().split('T')[0];
+      });
+          
+        
+        response_200(res, "workouts fetched successfully", creationDates);
+    } catch (error) {
+        response_500(res, "error fetching workouts: ", error);
+    }
+}
