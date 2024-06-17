@@ -34,8 +34,8 @@ export async function register(req, res) {
         }
     });
 
-    const refreshToken = jwt.sign({userId: user.id, firstName: user.firstName, lastName: user.lastName}, process.env.JWT_SECRET, {expiresIn: "30d"}) ;
-    const accessToken = jwt.sign({userId: user.id, firstName: user.firstName, lastName: user.lastName}, process.env.JWT_SECRET, {expiresIn: "1m"}) ;
+    const refreshToken = jwt.sign({userId: newUser.id, firstName: newUser.firstName, lastName: newUser.lastName}, process.env.JWT_SECRET, {expiresIn: "30d"}) ;
+    const accessToken = jwt.sign({userId: newUser.id, firstName: newUser.firstName, lastName: newUser.lastName}, process.env.JWT_SECRET, {expiresIn: "1m"}) ;
 
         res.cookie("refreshToken", refreshToken, {httpOnly: true, maxAge: 30*24*60*60*1000, secure: true, sameSite: "strict"});
         res.cookie("accessToken", accessToken, {httpOnly: true, maxAge: 60*1000, secure: true, sameSite: "strict"});
@@ -212,7 +212,16 @@ export async function renewAccessToken(req, res) {
 }
 
 // Other functions (register, login) should similarly ensure they only send one response per request.
-
+export async function logout(req, res) {
+    try {
+        res.clearCookie("accessToken");
+        res.clearCookie("refreshToken");
+        return res.status(200).json({ message: "Logged out successfully" });
+    } catch (error) {
+        console.error("Error in logout:", error);
+        return res.status(500).json({ message: "Error logging out" });
+    }
+}
 
 const exercisesArray = [
     {
