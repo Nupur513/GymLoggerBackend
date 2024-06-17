@@ -34,12 +34,16 @@ export async function register(req, res) {
         }
     });
 
-    const token = jwt.sign({userId: newUser.id, firstName: newUser.firstName, lastName: newUser.lastName}, process.env.JWT_SECRET, {expiresIn: "30d"});
+    const refreshToken = jwt.sign({userId: user.id, firstName: user.firstName, lastName: user.lastName}, process.env.JWT_SECRET, {expiresIn: "30d"}) ;
+    const accessToken = jwt.sign({userId: user.id, firstName: user.firstName, lastName: user.lastName}, process.env.JWT_SECRET, {expiresIn: "1m"}) ;
+
+        res.cookie("refreshToken", refreshToken, {httpOnly: true, maxAge: 30*24*60*60*1000, secure: true, sameSite: "strict"});
+        res.cookie("accessToken", accessToken, {httpOnly: true, maxAge: 60*1000, secure: true, sameSite: "strict"});
 
     const returnedUser = {
         firstName: newUser.firstName,
         lastName: newUser.lastName,
-        token: token
+       // token: token
     }
     const defaultExercises = await prisma.exercise.createMany({
         data: exercisesArray.map(exercise=>({
@@ -81,12 +85,16 @@ export async function login(req, res) {
             response_400(res, "invalid credentials");return;
         }
 
-        const token = jwt.sign({userId: user.id, firstName: user.firstName, lastName: user.lastName}, process.env.JWT_SECRET, {expiresIn: "30d"}) ;
+        const refreshToken = jwt.sign({userId: user.id, firstName: user.firstName, lastName: user.lastName}, process.env.JWT_SECRET, {expiresIn: "30d"}) ;
+        const accessToken = jwt.sign({userId: user.id, firstName: user.firstName, lastName: user.lastName}, process.env.JWT_SECRET, {expiresIn: "1m"}) ;
+
+        res.cookie("refreshToken", refreshToken, {httpOnly: true, maxAge: 30*24*60*60*1000, secure: true, sameSite: "strict"});
+        res.cookie("accessToken", accessToken, {httpOnly: true, maxAge: 60*1000, secure: true, sameSite: "strict"});
 
         const returnedUser = {
             firstName: user.firstName,
             lastName: user.lastName,
-            token: token
+            success:true
         }
         response_201(res, "User logged in successfully", returnedUser);
     }
@@ -95,6 +103,116 @@ export async function login(req, res) {
         response_500(res, "error logging in user: ", error);
     }
 }
+
+
+// export async function authVerify(req, res){
+//     // const authHeader = req.headers.authorization;
+//     // if(!authHeader || !authHeader.startsWith('Bearer ')){
+//     //     return res.status(401).json({message: "Unauthorized"});
+//     // }
+//     // const token = authHeader.split(' ')[1];
+//     console.log(req.cookies.accessToken);
+//     const valid = false;
+    
+//     const accesstoken = req.cookies.accessToken;
+//     if(!accesstoken){
+//         if(renewAccessToken(req, res).exist){
+//             return response_201(res, "Authorized");
+//         }
+//         else
+//         {
+//             console.log("22");
+//             return res.status(401).json({valid: valid, message: "Unauthorized1"});
+//         }
+//     }
+//     try{
+//         console.log("23");
+//         const payload = jwt.verify(accesstoken, process.env.JWT_SECRET);
+//         if(!payload){
+//             console.log("24");
+//             return res.status(401).json({valid: valid, message: "Unauthorized2"});
+//         }
+//         req.user = {
+//             userId: payload.userId,
+//             firstName: payload.firstName,
+//             lastName: payload.lastName
+//         };
+//         console.log(req.user);
+//         console.log("harsq");
+        
+//         console.log("25");
+//         return res.status(200).json({valid: true, message: "Authorized"});
+//         }
+    
+//     catch(error){
+//         return res.status(401).json({valid: valid, message: "Unauthorized3"}); 
+//     }
+// }
+
+export async function authVerify(req, res) {
+    try {
+        const accessToken = req.cookies.accessToken;
+
+        if (!accessToken) {
+            const renewed = await renewAccessToken(req, res);
+            if (renewed.exist) {
+                console.log("renewing token");
+                return res.status(200).json({ valid: true, message: "Authorized" });
+            } else {
+                console.log("cannot be renewed");
+                return res.status(401).json({ valid: false, message: "Unauthorized1" });
+            }
+        }
+
+        const payload = jwt.verify(accessToken, process.env.JWT_SECRET);
+        if (!payload) {
+            return res.status(401).json({ valid: false, message: "Unauthorized2" });
+        }
+
+        req.user = {
+            userId: payload.userId,
+            firstName: payload.firstName,
+            lastName: payload.lastName
+        };
+
+        return res.status(200).json({ valid: true, message: "Authorized" });
+    } catch (error) {
+        console.error("Error in authVerify:", error);
+        return res.status(401).json({ valid: false, message: "Unauthorized3" });
+    }
+}
+
+export async function renewAccessToken(req, res) {
+    const refreshToken = req.cookies.refreshToken;
+    let exist = false; // Use let here because exist might change
+
+    if (!refreshToken) {
+        // Instead of sending response here, return value
+        return { exist: false };
+    }
+
+    try {
+        const payload = jwt.verify(refreshToken, process.env.JWT_SECRET);
+        if (!payload) {
+            // Instead of sending response here, return value
+            return { exist: false };
+        }
+
+        const accessToken = jwt.sign({ userId: payload.userId, firstName: payload.firstName, lastName: payload.lastName }, process.env.JWT_SECRET, { expiresIn: "15m" });
+        res.cookie("accessToken", accessToken, { httpOnly: true, maxAge: 10 * 1000, secure: true, sameSite: "strict" });
+
+        exist = true;
+        // Instead of sending response here, return value
+        return { exist: true };
+    } catch (error) {
+        console.error("Error in renewAccessToken:", error);
+        // Instead of sending response here, return value
+        return { exist: false };
+    }
+}
+
+// Other functions (register, login) should similarly ensure they only send one response per request.
+
 
 const exercisesArray = [
     {
