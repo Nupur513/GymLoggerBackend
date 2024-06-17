@@ -1,5 +1,5 @@
 import express from 'express'
-import { register, login, authVerify } from '../../controllers/auth.controllers.js'
+import { register, login, authVerify, logout } from '../../controllers/auth.controllers.js'
 
 
 const router = express.Router();
@@ -7,5 +7,6 @@ const router = express.Router();
 router.route('/verify-token').get(authVerify).post(authVerify);
 router.route('/register').post(register);
 router.route('/login').post(login);
+router.route('/logout').post(logout);
 
 export default router;
