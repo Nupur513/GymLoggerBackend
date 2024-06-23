@@ -10,6 +10,20 @@ export async function getExercises(req, res) {
     }
 }
 
+export async function getUserExercises(req, res) {
+    try {
+        const userExercises = await prisma.exercise.findMany({
+            where: {
+                userId: req.user.userId
+            }
+        });
+        console.log(userExercises);
+        response_200(res,"user exercises fetched successfully" ,userExercises);
+    } catch (error) {
+        response_500(res, "error fetching user exercises: ",error);
+    }
+}
+
 export async function createExercise(req,res){
     try{
         if(!req.body.name || !req.body.bodyPart || !req.body.equipment || !req.body.description){

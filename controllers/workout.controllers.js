@@ -1,11 +1,12 @@
 import  { response_500, response_200, response_201,response_400, response_404 } from '../utils/statuscodes.utils.js';
 import prisma from '../config/db.config.js';
 import { format } from 'date-fns';
+import cookieParser from 'cookie-parser';
 export async function createWorkout(req, res) {
     try{
         const {workoutExercises} = req.body;
-        
-        if (!req.user.userId) {
+        const uid = req.user.userId;
+        if (!uid) {
             return response_400(res, "User ID is missing in the request");
         }
         const workout = await prisma.workout.create({
@@ -24,7 +25,7 @@ export async function createWorkout(req, res) {
                         
                     }))
                 },
-                userId: req.user.userId
+                userId: uid
                 
             }
         });
@@ -128,17 +129,79 @@ export const getWorkoutDates = async (req, res) => {
             }
         });
           // Debugging: Print the retrieved workouts
-    console.log('Retrieved workouts:', workouts);
-
+    
 
     const creationDates = workouts.map(workout => {
         const date = new Date(workout.created);
         return date.toISOString().split('T')[0];
       });
           
-        
+      console.log('Retrieved workout dates:', creationDates);
+
         response_200(res, "workouts fetched successfully", creationDates);
     } catch (error) {
+        response_500(res, "error fetching workouts: ", error);
+    }
+}
+
+export const getWorkouts = async(req,res) => {
+    try{
+        const userId = req.user.userId;
+        const workouts = await prisma.workout.findMany({
+            where: {
+                userId: userId
+            },
+            include: {
+                workoutExercises: true
+            }
+        });
+
+        response_200(res, "workouts fetched successfully", workouts);
+    }
+    catch(error){
+        response_500(res, "error fetching workouts: ", error);
+    }
+}
+
+export const getWorkoutByDate = async(req,res) => {
+    try{
+        const {date} = req.params;
+        const userId = req.user.userId;
+        const targetDate = new Date(date);
+
+        // Calculate start and end of the day for the given date in UTC
+        const startOfDay = new Date(Date.UTC(targetDate.getUTCFullYear(), targetDate.getUTCMonth(), targetDate.getUTCDate(), 0, 0, 0));
+        const endOfDay = new Date(Date.UTC(targetDate.getUTCFullYear(), targetDate.getUTCMonth(), targetDate.getUTCDate(), 23, 59, 59, 999));
+    
+        console.log('Start of day (UTC):', startOfDay.toISOString());
+        console.log('End of day (UTC):', endOfDay.toISOString());
+    
+        // Query workouts within the date range
+        const workouts = await prisma.workout.findMany({
+          where: {
+            userId: userId,
+            AND: [
+              {
+                created: {
+                  gte: startOfDay.toISOString(), // Greater than or equal to start of the day (UTC)
+                },
+              },
+              {
+                created: {
+                  lte: endOfDay.toISOString(), // Less than or equal to end of the day (UTC)
+                },
+              },
+            ],
+          },
+          include: {
+            workoutExercises: true
+        }
+        });
+    
+        console.log("workout: ", workouts)
+        response_200(res, "workouts fetched successfully", workouts);
+    }
+    catch(error){
         response_500(res, "error fetching workouts: ", error);
     }
 }

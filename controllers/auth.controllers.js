@@ -105,49 +105,6 @@ export async function login(req, res) {
 }
 
 
-// export async function authVerify(req, res){
-//     // const authHeader = req.headers.authorization;
-//     // if(!authHeader || !authHeader.startsWith('Bearer ')){
-//     //     return res.status(401).json({message: "Unauthorized"});
-//     // }
-//     // const token = authHeader.split(' ')[1];
-//     console.log(req.cookies.accessToken);
-//     const valid = false;
-    
-//     const accesstoken = req.cookies.accessToken;
-//     if(!accesstoken){
-//         if(renewAccessToken(req, res).exist){
-//             return response_201(res, "Authorized");
-//         }
-//         else
-//         {
-//             console.log("22");
-//             return res.status(401).json({valid: valid, message: "Unauthorized1"});
-//         }
-//     }
-//     try{
-//         console.log("23");
-//         const payload = jwt.verify(accesstoken, process.env.JWT_SECRET);
-//         if(!payload){
-//             console.log("24");
-//             return res.status(401).json({valid: valid, message: "Unauthorized2"});
-//         }
-//         req.user = {
-//             userId: payload.userId,
-//             firstName: payload.firstName,
-//             lastName: payload.lastName
-//         };
-//         console.log(req.user);
-//         console.log("harsq");
-        
-//         console.log("25");
-//         return res.status(200).json({valid: true, message: "Authorized"});
-//         }
-    
-//     catch(error){
-//         return res.status(401).json({valid: valid, message: "Unauthorized3"}); 
-//     }
-// }
 
 export async function authVerify(req, res) {
     try {
