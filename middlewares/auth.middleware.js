@@ -13,7 +13,7 @@ export async function authVerify(req, res, next){
         }
         else
         {
-            return res.status(401).json({message: "Unauthorized1"});
+            return;
         }
     }
     try{
