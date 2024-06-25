@@ -70,4 +70,5 @@ enum Status {
   active
   completed
   yetToStart
+  incomplete
 }

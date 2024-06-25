@@ -205,3 +205,43 @@ export const getWorkoutByDate = async(req,res) => {
         response_500(res, "error fetching workouts: ", error);
     }
 }
+
+export const markPreviosWorkoutAsIncomplete = async(req,res) => {
+    try{
+        const userId = req.user.userId;
+        let currentDate = new Date();
+        currentDate.setUTCHours(0,0,0,0);
+        console.log("current date: ", currentDate);
+        const workouts = await prisma.workout.findMany({
+            where: {
+                userId: userId,
+                status:{ in: ["yetToStart","active"]},
+                created: {
+                    lte: currentDate.toISOString()
+                }
+            }
+        });
+
+        if(workouts){
+            const modifiedWorkouts = await Promise.all(workouts.map(async workout => {
+                
+                const modifiedWorkout = await prisma.workout.update({
+                    where: {
+                        id: workout.id
+                    },
+                    data: {
+                        status: "incomplete"
+                    }
+                });
+                return modifiedWorkout;
+            }));
+            response_200(res, "workout status modified successfully", modifiedWorkouts);
+        }
+        else{
+            response_404(res, "no active workout found");
+        }
+    }
+    catch(error){
+        response_500(res, "error modifying workout status: ", error);
+    }
+}
