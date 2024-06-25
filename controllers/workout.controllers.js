@@ -245,3 +245,26 @@ export const markPreviosWorkoutAsIncomplete = async(req,res) => {
         response_500(res, "error modifying workout status: ", error);
     }
 }
+
+export const getWorkoutById = async(req,res) => {
+    try{
+        const {workoutId} = req.params;
+    
+        const workout = await prisma.workout.findUnique({
+            where: {
+                id: workoutId
+            },
+            include: {
+                workoutExercises: true, // Include exercises relation
+              },
+        });
+        if(!workout){
+            response_404(res, "workout not found");
+            return;
+        }
+        response_200(res, "workout fetched successfully", workout);
+    }
+    catch(error){
+        response_500(res, "error fetching workout: ", error);
+    }
+}
