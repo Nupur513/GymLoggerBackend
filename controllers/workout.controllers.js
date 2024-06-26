@@ -78,8 +78,11 @@ export async function modifyWorkoutStatus(req,res){
 export async function modifyExerciseStatus(req,res){
     try{
         const {workoutId, exerciseId} = req.params;
-        const {status}  = req.body;
-        if(!(status == "active" || status == "completed")) {
+        const {status } = req.body;
+        console.log(status)
+        console.log(workoutId," ", exerciseId)
+
+        if(!(status === "active" || status === "completed")) {
             response_400(res, "cannot modify exercise status to the given status");return;
         }
         const exercise = await prisma.workout.findUnique({
@@ -266,5 +269,25 @@ export const getWorkoutById = async(req,res) => {
     }
     catch(error){
         response_500(res, "error fetching workout: ", error);
+    }
+}
+
+export const getExerciseStatus = async(req,res) => {
+    try{
+        const {workoutId, exerciseId} = req.params;
+        const exercise = await prisma.workoutExercise.findUnique({
+            where: {
+                id: exerciseId,
+                workoutId: workoutId
+            }
+        });
+        if(!exercise){
+            response_404(res, "exercise not found");
+            return;
+        }
+        response_200(res, "exercise fetched successfully", exercise);
+    }
+    catch(error){
+        response_500(res, "error fetching exercise: ", error);
     }
 }
