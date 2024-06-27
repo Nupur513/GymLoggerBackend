@@ -38,6 +38,7 @@ export async function authVerify(req, res, next){
 export async function renewAccessToken(req, res){
     const refreshToken = req.cookies.refreshToken;
     const exist = false;
+    console.log(refreshToken)
     if(!refreshToken){
         return res.status(401).json({message: "Unauthorized4"});
     }
