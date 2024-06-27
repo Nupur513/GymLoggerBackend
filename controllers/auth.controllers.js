@@ -35,10 +35,10 @@ export async function register(req, res) {
     });
 
     const refreshToken = jwt.sign({userId: newUser.id, firstName: newUser.firstName, lastName: newUser.lastName}, process.env.JWT_SECRET, {expiresIn: "30d"}) ;
-    const accessToken = jwt.sign({userId: newUser.id, firstName: newUser.firstName, lastName: newUser.lastName}, process.env.JWT_SECRET, {expiresIn: "1m"}) ;
+    const accessToken = jwt.sign({userId: newUser.id, firstName: newUser.firstName, lastName: newUser.lastName}, process.env.JWT_SECRET, {expiresIn: "15m"}) ;
 
         res.cookie("refreshToken", refreshToken, {httpOnly: true, maxAge: 30*24*60*60*1000, secure: true, sameSite: "strict"});
-        res.cookie("accessToken", accessToken, {httpOnly: true, maxAge: 60*1000, secure: true, sameSite: "strict"});
+        res.cookie("accessToken", accessToken, {httpOnly: true, maxAge: 15*60*1000, secure: true, sameSite: "strict"});
 
     const returnedUser = {
         firstName: newUser.firstName,
@@ -86,10 +86,10 @@ export async function login(req, res) {
         }
 
         const refreshToken = jwt.sign({userId: user.id, firstName: user.firstName, lastName: user.lastName}, process.env.JWT_SECRET, {expiresIn: "30d"}) ;
-        const accessToken = jwt.sign({userId: user.id, firstName: user.firstName, lastName: user.lastName}, process.env.JWT_SECRET, {expiresIn: "1m"}) ;
+        const accessToken = jwt.sign({userId: user.id, firstName: user.firstName, lastName: user.lastName}, process.env.JWT_SECRET, {expiresIn: "15m"}) ;
 
         res.cookie("refreshToken", refreshToken, {httpOnly: true, maxAge: 30*24*60*60*1000, secure: true, sameSite: "strict"});
-        res.cookie("accessToken", accessToken, {httpOnly: true, maxAge: 60*1000, secure: true, sameSite: "strict"});
+        res.cookie("accessToken", accessToken, {httpOnly: true, maxAge: 15*60*1000, secure: true, sameSite: "strict"});
 
         const returnedUser = {
             firstName: user.firstName,
@@ -106,67 +106,68 @@ export async function login(req, res) {
 
 
 
-export async function authVerify(req, res) {
-    try {
-        const accessToken = req.cookies.accessToken;
+// export async function authVerify(req, res) {
+//     try {
+//         console.log("helloji")
+//         const accessToken = req.cookies.accessToken;
 
-        if (!accessToken) {
-            const renewed = await renewAccessToken(req, res);
-            if (renewed.exist) {
-                console.log("renewing token");
-                return res.status(200).json({ valid: true, message: "Authorized" });
-            } else {
-                console.log("cannot be renewed");
-                return res.status(401).json({ valid: false, message: "Unauthorized1" });
-            }
-        }
+//         if (!accessToken) {
+//             const renewed = await renewAccessToken(req, res);
+//             if (renewed.exist) {
+//                 console.log("renewing token");
+//                 return res.status(200).json({ valid: true, message: "Authorized" });
+//             } else {
+//                 console.log("cannot be renewed");
+//                 return res.status(401).json({ valid: false, message: "Unauthorized1" });
+//             }
+//         }
 
-        const payload = jwt.verify(accessToken, process.env.JWT_SECRET);
-        if (!payload) {
-            return res.status(401).json({ valid: false, message: "Unauthorized2" });
-        }
+//         const payload = jwt.verify(accessToken, process.env.JWT_SECRET);
+//         if (!payload) {
+//             return res.status(401).json({ valid: false, message: "Unauthorized2" });
+//         }
 
-        req.user = {
-            userId: payload.userId,
-            firstName: payload.firstName,
-            lastName: payload.lastName
-        };
+//         req.user = {
+//             userId: payload.userId,
+//             firstName: payload.firstName,
+//             lastName: payload.lastName
+//         };
 
-        return res.status(200).json({ valid: true, message: "Authorized" });
-    } catch (error) {
-        console.error("Error in authVerify:", error);
-        return res.status(401).json({ valid: false, message: "Unauthorized3" });
-    }
-}
+//         return res.status(200).json({ valid: true, message: "Authorized" });
+//     } catch (error) {
+//         console.error("Error in authVerify:", error);
+//         return res.status(401).json({ valid: false, message: "Unauthorized3" });
+//     }
+// }
 
-export async function renewAccessToken(req, res) {
-    const refreshToken = req.cookies.refreshToken;
-    let exist = false; // Use let here because exist might change
+// export async function renewAccessToken(req, res) {
+//     const refreshToken = req.cookies.refreshToken;
+//     let exist = false; // Use let here because exist might change
 
-    if (!refreshToken) {
-        // Instead of sending response here, return value
-        return { exist: false };
-    }
+//     if (!refreshToken) {
+//         // Instead of sending response here, return value
+//         return { exist: false };
+//     }
 
-    try {
-        const payload = jwt.verify(refreshToken, process.env.JWT_SECRET);
-        if (!payload) {
-            // Instead of sending response here, return value
-            return { exist: false };
-        }
+//     try {
+//         const payload = jwt.verify(refreshToken, process.env.JWT_SECRET);
+//         if (!payload) {
+//             // Instead of sending response here, return value
+//             return { exist: false };
+//         }
 
-        const accessToken = jwt.sign({ userId: payload.userId, firstName: payload.firstName, lastName: payload.lastName }, process.env.JWT_SECRET, { expiresIn: "15m" });
-        res.cookie("accessToken", accessToken, { httpOnly: true, maxAge: 10 * 1000, secure: true, sameSite: "strict" });
+//         const accessToken = jwt.sign({ userId: payload.userId, firstName: payload.firstName, lastName: payload.lastName }, process.env.JWT_SECRET, { expiresIn: "15m" });
+//         res.cookie("accessToken", accessToken, { httpOnly: true, maxAge: 10 * 1000, secure: true, sameSite: "strict" });
 
-        exist = true;
-        // Instead of sending response here, return value
-        return { exist: true };
-    } catch (error) {
-        console.error("Error in renewAccessToken:", error);
-        // Instead of sending response here, return value
-        return { exist: false };
-    }
-}
+//         exist = true;
+//         // Instead of sending response here, return value
+//         return { exist: true };
+//     } catch (error) {
+//         console.error("Error in renewAccessToken:", error);
+//         // Instead of sending response here, return value
+//         return { exist: false };
+//     }
+// }
 
 // Other functions (register, login) should similarly ensure they only send one response per request.
 export async function logout(req, res) {
