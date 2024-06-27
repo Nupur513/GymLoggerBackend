@@ -11,14 +11,14 @@ dotenv.config();
 const app = express();
 app.use(cookieParser());
 app.use(cors({
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:3000', 'https://potentia.onrender.com'],
     credentials: true 
 }));
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: ["http://localhost:3000", "https://potentia.onrender.com"],
         methods: ["GET", "POST"]
     }
 });
