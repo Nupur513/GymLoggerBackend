@@ -47,8 +47,8 @@ export async function renewAccessToken(req, res){
         if(!payload){
             return res.status(401).json({message: "Unauthorized5"});
         }
-        const accessToken = jwt.sign({userId: payload.userId, firstName: payload.firstName, lastName: payload.lastName}, process.env.JWT_SECRET, {expiresIn: "15m"}) ;
-        res.cookie("accessToken", accessToken, {httpOnly: true, maxAge: 15*60*1000, secure: true, sameSite: "none"});
+        const accessToken = jwt.sign({userId: payload.userId, firstName: payload.firstName, lastName: payload.lastName}, process.env.JWT_SECRET, {expiresIn: "1m"}) ;
+        res.cookie("accessToken", accessToken, {httpOnly: true, maxAge: 60*1000, secure: true, sameSite: "strict"});
         exist = true;
 
         return res.status(200).json({exist:exist, message: "Access token renewed successfully"});
