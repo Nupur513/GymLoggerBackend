@@ -37,8 +37,8 @@ export async function register(req, res) {
     const refreshToken = jwt.sign({userId: newUser.id, firstName: newUser.firstName, lastName: newUser.lastName}, process.env.JWT_SECRET, {expiresIn: "30d"}) ;
     const accessToken = jwt.sign({userId: newUser.id, firstName: newUser.firstName, lastName: newUser.lastName}, process.env.JWT_SECRET, {expiresIn: "15m"}) ;
 
-        res.cookie("refreshToken", refreshToken, {httpOnly: true, maxAge: 30*24*60*60*1000, secure: true, sameSite: "none"});
-        res.cookie("accessToken", accessToken, {httpOnly: true, maxAge: 15*60*1000, secure: true, sameSite: "none"});
+        res.cookie("refreshToken", refreshToken, {httpOnly: true, maxAge: 30*24*60*60*1000, secure: true, sameSite: "strict"});
+        res.cookie("accessToken", accessToken, {httpOnly: true, maxAge: 15*60*1000, secure: true, sameSite: "strict"});
 
     const returnedUser = {
         firstName: newUser.firstName,
@@ -88,8 +88,8 @@ export async function login(req, res) {
         const refreshToken = jwt.sign({userId: user.id, firstName: user.firstName, lastName: user.lastName}, process.env.JWT_SECRET, {expiresIn: "30d"}) ;
         const accessToken = jwt.sign({userId: user.id, firstName: user.firstName, lastName: user.lastName}, process.env.JWT_SECRET, {expiresIn: "15m"}) ;
 
-        res.cookie("refreshToken", refreshToken, {httpOnly: true, maxAge: 30*24*60*60*1000, secure: true, sameSite: "none"});
-        res.cookie("accessToken", accessToken, {httpOnly: true, maxAge: 15*60*1000, secure: true, sameSite: "none"});
+        res.cookie("refreshToken", refreshToken, {httpOnly: true, maxAge: 30*24*60*60*1000, secure: true, sameSite: "strict"});
+        res.cookie("accessToken", accessToken, {httpOnly: true, maxAge: 15*60*1000, secure: true, sameSite: "strict"});
 
         const returnedUser = {
             firstName: user.firstName,

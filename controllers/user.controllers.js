@@ -23,6 +23,20 @@ export async function getUser(req, res) {
     }
 }
 
+export async function getUserById(req, res) {
+    try {
+        const { userId } = req.body;
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        });
+        return response_200(res, 'User fetched successfully', user);
+    } catch (error) {
+        return response_500(res, 'Error fetching user', error);
+    }
+}
+
 export async function updateUser(req, res){
     try{
         const {firstName, lastName, weight, height} = req.body;
