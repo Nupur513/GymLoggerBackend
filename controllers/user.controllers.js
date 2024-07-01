@@ -61,3 +61,16 @@ export async function updateUser(req, res){
         return response_500(res, "Error updating user", error);
     }
 }
+
+export async function getUserId(req, res){
+    try{
+        const userId = req.user.userId;
+        if(!userId){
+            return response_401(res, "Unauthorized");
+        }
+        return response_200(res, "User id fetched successfully", {userId: userId});
+    }
+    catch(error){
+        return response_500(res, "Error fetching user id", error);
+    }
+}
