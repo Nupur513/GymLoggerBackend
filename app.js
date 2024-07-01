@@ -15,44 +15,73 @@ app.use(cors({
     credentials: true 
 }));
 
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
-    cors: {
-        origin: ["http://localhost:3000", "https://potentia.onrender.com"],
-        methods: ["GET", "POST"]
-    }
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+      origin: ["http://localhost:3000"],
+      methods: ["GET", "POST"]
+  }
 });
 
+  const users = {}; // Store user IDs and socket IDs
 
-io.on('connection', socket => {
-    console.log('User connected:', socket.id);
+  io.on('connection', (socket) => {
+    console.log('a user connected', socket.id);
   
-    // Join gym room
-    socket.on('joinGym', gymId => {
-      socket.join(gymId);
-      console.log(`User ${socket.id} joined gym ${gymId}`);
+    socket.on('register', (userId) => {
+      console.log('UserId', userId)
+      console.log(`User ${userId} registered with socket ID ${socket.id}`);
+      users[userId] = socket.id;
+      console.log('users:', users);
     });
   
-
-    socket.on('setCompleted', ({ gymId, userName, exerciseName }) => {
-
-      io.to(gymId).emit('setCompleted', { userName, exerciseName });
+    socket.on('create-gym', ({ gymName, friends }) => {
+      console.log(`User ${socket.id} is creating gym "${gymName}"`);
+      socket.join(gymName);
+      friends.forEach(friendId => {
+        if (users[friendId]) {
+          console.log(`Sending invite to user ${friendId} for gym "${gymName}"`);
+          io.to(users[friendId]).emit('invite', { gymName, friendId });
+        }
+      });
     });
-
-    socket.on('exerciseCompleted', ({ gymId, workoutId, exerciseId }) => {
-
-        io.to(gymId).emit('exerciseCompleted', { workoutId, exerciseId });
+  
+    socket.on('join-gym', ({ gymName, userId }) => {
+      console.log(`User ${userId} is joining gym "${gymName}"`);
+      socket.join(gymName);
+      socket.broadcast.to(gymName).emit('user-joined', { userId });
     });
-
-    socket.on('workoutCompleted', ({ gymId, workoutId, exerciseId }) => {
-        io.to(gymId).emit('workoutCompleted', { workoutId, exerciseId });
+  
+    socket.on('reject-invite', ({ gymName, userId }) => {
+      console.log(`User ${userId} rejected invite for gym "${gymName}"`);
+      io.to(users[userId]).emit('invite-rejected', { gymName });
+    });
+  
+    socket.on('complete-set', ({ gymName, userId, ExerciseName }) => {
+      console.log(`User ${userId} completed a set of "${ExerciseName}" in gym "${gymName}"`);
+      socket.broadcast.to(gymName).emit('set-completed', {gymName, userId, ExerciseName });
     });
   
     socket.on('disconnect', () => {
-      console.log('User disconnected:', socket.id);
+      console.log('user disconnected', socket.id);
+      Object.keys(users).forEach(userId => {
+        if (users[userId] === socket.id) {
+          console.log(`User ${userId} disconnected`);
+          delete users[userId];
+        }
+      });
     });
   });
   
+  server.listen(4000, () => {
+    console.log('listening on 4000');
+  });
+
+
+
+
+
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -71,6 +100,3 @@ app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}! 🚀`);
     ConnDB();
 });
-httpServer.listen(4000, () => {
-    console.log('Server is running on port 4000');
-  });

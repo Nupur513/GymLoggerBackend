@@ -26,7 +26,7 @@ export async function authVerify(req, res, next){
             firstName: payload.firstName,
             lastName: payload.lastName
         };
-        console.log(req.user);
+        //console.log(req.user);
         next();
         }
     
@@ -38,7 +38,7 @@ export async function authVerify(req, res, next){
 export async function renewAccessToken(req, res){
     const refreshToken = req.cookies.refreshToken;
     const exist = false;
-    console.log(refreshToken)
+    //console.log(refreshToken)
     if(!refreshToken){
         return res.status(401).json({message: "Unauthorized4"});
     }
@@ -54,6 +54,6 @@ export async function renewAccessToken(req, res){
         return res.status(200).json({exist:exist, message: "Access token renewed successfully"});
     }
     catch(error){
-        return res.status(401).json({message: "Unauthorized6"});
+        return res.status(401).json({message: "Unauthorized6", error: error});
     }
 }
