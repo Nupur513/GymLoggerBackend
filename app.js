@@ -42,7 +42,7 @@ const io = new Server(server, {
       friends.forEach(friendId => {
         if (users[friendId]) {
           console.log(`Sending invite to user ${friendId} for gym "${gymName}"`);
-          io.to(users[friendId].socketId).emit('invite', { gymName, friendId });
+          io.to(users[friendId].socketId).emit('invite', { gymName, friend: usersSocket[socket.id]});
         }
       });
     });
@@ -50,7 +50,10 @@ const io = new Server(server, {
     socket.on('join-gym', ({ gymName, userId }) => {
       console.log(`User ${userId} is joining gym "${gymName}"`);
       socket.join(gymName);
-      socket.broadcast.to(gymName).emit('user-joined', { userName: users[userId].userName });
+      console.log('users:', users);
+      console.log('users[userId]:', users[userId]);
+      console.log('users[userId]:', users[userId].userName);
+      socket.broadcast.to(gymName).emit('user-joined', { user: users[userId] });
     });
   
     socket.on('reject-invite', ({ gymName, userId }) => {
@@ -61,7 +64,7 @@ const io = new Server(server, {
     socket.on('complete-set', ({ gymName, userId, ExerciseName }) => {
       console.log(`User ${userId} completed a set of "${ExerciseName}" in gym "${gymName}"`);
       //console.log('users:', users);
-      socket.broadcast.to(gymName).emit('set-completed', {gymName,userName: users[userId].userName, ExerciseName });
+      socket.broadcast.to(gymName).emit('set-completed', {gymName,user: users[userId], ExerciseName });
     });
   
     socket.on('disconnect', () => {
