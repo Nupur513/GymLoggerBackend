@@ -20,7 +20,7 @@ export async function authVerify(req, res, next){
         const payload = jwt.verify(accesstoken, process.env.JWT_SECRET);
         if(!payload){
             return res.status(401).json({message: "Unauthorized2"});
-        }
+       }
         req.user = {
             userId: payload.userId,
             firstName: payload.firstName,

@@ -24,24 +24,25 @@ const io = new Server(server, {
 });
 
   const users = {}; // Store user IDs and socket IDs
-
+  const usersSocket = {}; // Store socket IDs and user IDs
   io.on('connection', (socket) => {
     console.log('a user connected', socket.id);
   
-    socket.on('register', (userId) => {
-      console.log('UserId', userId)
+    socket.on('register', (userId, userName) => {
+    //  console.log('UserId', userId)
       console.log(`User ${userId} registered with socket ID ${socket.id}`);
-      users[userId] = socket.id;
+      users[userId] = {socketId: socket.id, userName: userName};
+      usersSocket[socket.id] = {userId,userName};
       console.log('users:', users);
     });
   
     socket.on('create-gym', ({ gymName, friends }) => {
-      console.log(`User ${socket.id} is creating gym "${gymName}"`);
+      console.log(`User ${usersSocket[socket.id].userName} is creating gym "${gymName}"`);
       socket.join(gymName);
       friends.forEach(friendId => {
         if (users[friendId]) {
           console.log(`Sending invite to user ${friendId} for gym "${gymName}"`);
-          io.to(users[friendId]).emit('invite', { gymName, friendId });
+          io.to(users[friendId].socketId).emit('invite', { gymName, friendId });
         }
       });
     });
@@ -49,7 +50,7 @@ const io = new Server(server, {
     socket.on('join-gym', ({ gymName, userId }) => {
       console.log(`User ${userId} is joining gym "${gymName}"`);
       socket.join(gymName);
-      socket.broadcast.to(gymName).emit('user-joined', { userId });
+      socket.broadcast.to(gymName).emit('user-joined', { userName: users[userId].userName });
     });
   
     socket.on('reject-invite', ({ gymName, userId }) => {
@@ -59,7 +60,8 @@ const io = new Server(server, {
   
     socket.on('complete-set', ({ gymName, userId, ExerciseName }) => {
       console.log(`User ${userId} completed a set of "${ExerciseName}" in gym "${gymName}"`);
-      socket.broadcast.to(gymName).emit('set-completed', {gymName, userId, ExerciseName });
+      //console.log('users:', users);
+      socket.broadcast.to(gymName).emit('set-completed', {gymName,userName: users[userId].userName, ExerciseName });
     });
   
     socket.on('disconnect', () => {
@@ -76,12 +78,6 @@ const io = new Server(server, {
   server.listen(4000, () => {
     console.log('listening on 4000');
   });
-
-
-
-
-
-
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

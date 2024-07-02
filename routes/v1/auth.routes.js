@@ -4,7 +4,7 @@ import { authVerify } from '../../middlewares/auth.middleware.js'
 
 const router = express.Router();
 
-router.route('/verify-token').get(authVerify).get(authVerify, (req, res) => {
+router.route('/verify-token').get(authVerify, (req, res) => {
     // If authVerify passes, we will reach this point
     return res.status(200).json({ valid: true, message: "Authorized" });
 });
