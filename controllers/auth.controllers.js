@@ -94,7 +94,7 @@ export async function login(req, res) {
         const returnedUser = {
             firstName: user.firstName,
             lastName: user.lastName,
-            success:true
+            userId: user.id
         }
         response_201(res, "User logged in successfully", returnedUser);
     }
