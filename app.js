@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+
 import dotenv from 'dotenv';
 import { ConnDB } from './config/db.config.js';
 import router from './routes/index.routes.js';
