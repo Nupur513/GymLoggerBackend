@@ -27,7 +27,7 @@ model Friendship {
   @@unique([userId1, userId2])
 }
 
-model Requests{
+model Requests {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
   userFrom String @db.ObjectId
   userTo   String @db.ObjectId
