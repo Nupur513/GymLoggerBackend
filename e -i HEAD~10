@@ -1,0 +1,131 @@
+[33mcommit c02706578dc1f8a56dc65918aa6ed63579adc208[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Sun Sep 8 16:54:05 2024 +0530
+
+    unpushed changes committed
+
+[33mcommit 7d198ddd0b89a516bb7606be523b184e6f689f08[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Tue Jul 2 10:30:22 2024 +0530
+
+    sockets finalised
+
+[33mcommit 42712486d1537bce1c37d3944b481653f006e633[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Tue Jul 2 09:03:35 2024 +0530
+
+    ensured sockets to display userName instead of userId
+
+[33mcommit 27b179e221b125d2f21fd995b6555375ac4f883e[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Tue Jul 2 04:22:38 2024 +0530
+
+    implemented sockets for virtual live workouts
+
+[33mcommit d39d7d140d6fa3f9d5c98f573d8691b5e6db47cf[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Mon Jul 1 04:37:41 2024 +0530
+
+    created friendship and requests models and controllers
+
+[33mcommit 8baad6098ec8ca6748a890c64acf2a08f850b08f[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Thu Jun 27 18:17:08 2024 +0530
+
+    http cookies - sameSite: none
+
+[33mcommit bbbaadef5794519026f7541d74473527ad6e0128[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Thu Jun 27 17:20:24 2024 +0530
+
+    fixed authverify controller
+
+[33mcommit 1145e07fa92470fc7374e50db57981fdab8eb4b6[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Thu Jun 27 16:22:28 2024 +0530
+
+    fixed cors url
+
+[33mcommit 25c82fa7c5ed53d0004e8dfca36aaa9d339eff00[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Thu Jun 27 15:41:57 2024 +0530
+
+    vercel.json
+
+[33mcommit 8d05a101dc04d778c591a4d94687bc155b22b6aa[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Thu Jun 27 04:03:54 2024 +0530
+
+    intiliased socket functionality
+
+[33mcommit 65b639b18884e6c69de24b02745656e0084024c2[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Wed Jun 26 02:26:01 2024 +0530
+
+    fixed controllers
+
+[33mcommit c1021d9194be4f2121b2c8702698d33a2a0b664a[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Tue Jun 25 23:37:10 2024 +0530
+
+    implemented markPreviousWorkoutsAsIncomplete controller
+
+[33mcommit 0d2250e1c7acb72bf143147617db41a4b6f329a8[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Mon Jun 24 03:30:47 2024 +0530
+
+    implemented multiple user and workout controllers
+
+[33mcommit 39be98ae8655feb8389ce51dd80b2a4327966c4a[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Mon Jun 17 22:39:10 2024 +0530
+
+    added logout functionality
+
+[33mcommit f1cc589b100c5d1338e2970f63accbb1e3feda42[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Mon Jun 17 05:30:00 2024 +0530
+
+    created controllers for frontend auth verification
+
+[33mcommit 3cc2b08474eaa539cd10d4f300856daf86c9f24f[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Mon May 27 02:49:27 2024 +0530
+
+    created getWorkoutDates controller
+
+[33mcommit 575c403083599d0b7766222699a43c1debbee6a0[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Mon May 27 02:19:16 2024 +0530
+
+    default exercises added upon user registeration
+
+[33mcommit 20bf95301ebb64c399b9ed0b718d603f524f6be1[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Sun May 26 04:49:10 2024 +0530
+
+    implemented auth middleware
+
+[33mcommit e14aa4bb0cf8349e1b911ec1e3de86388f2babcf[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Sun May 26 03:34:37 2024 +0530
+
+    created auth controllers
+
+[33mcommit 00a3f130e34149d8d9d0726a987778833f7d62d0[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Sat May 25 23:05:44 2024 +0530
+
+    made changes to workout controller
+
+[33mcommit 1114a2ab38420a9dfe85a82ebafccc933969a06d[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Sat May 25 22:58:26 2024 +0530
+
+    made changes to schema and created workout controllers
+
+[33mcommit e9814b896260f86881e30249cb82f9b11fb64c4b[m
+Author: harshsingh554 <72743057+harshsingh554@users.noreply.github.com.>
+Date:   Sat May 25 17:12:19 2024 +0530
+
+    initialised projects and created exercises controllers
