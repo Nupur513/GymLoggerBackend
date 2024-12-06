@@ -1,5 +1,8 @@
 node_modules
 # Keep environment variables out of version control
 .env
+<<<<<<< HEAD
 Gym-Logger/
 GymLoggerBackend/
+=======
+>>>>>>> 2a2b9bda609d7505bfe6322b45fdc4850d1dd939
